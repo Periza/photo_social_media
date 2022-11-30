@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('created_at');
             $table->foreignIdFor(\App\Models\User::class, 'user_id');
             $table->string('image', 255);
+            $table->string('title', 255);
         });
     }
 
