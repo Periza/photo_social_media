@@ -3,10 +3,30 @@ const button = document.getElementById("convertButton");
 // get csrfToken
 const csrfToken = document.getElementsByName("csrf-token")[0].content;
 
+const title = document.getElementById('title');
+
 
 
 document.querySelectorAll(".drop-zone__input").forEach(inputElement => {
     const dropZoneElement = inputElement.closest(".drop-zone");
+
+    title.addEventListener("input", (event) => {
+        changeButtonColor();
+    });
+
+    button.addEventListener("mouseover", function(event) {
+        changeButtonColor();
+    });
+
+    function changeButtonColor() {
+        if(inputElement.files.length && title.value.length) {
+            button.classList.remove('fileNotPresent');
+            button.classList.add('filePresent');
+        } else {
+            button.classList.add('fileNotPresent');
+            button.classList.remove('filePresent');
+        }
+    }
 
     dropZoneElement.addEventListener("click", event => {
         inputElement.click();
@@ -16,16 +36,10 @@ document.querySelectorAll(".drop-zone__input").forEach(inputElement => {
         if(inputElement.files.length) {
             updateThumbnail(dropZoneElement, inputElement.files[0]);
 
-            // remove class from button
-            button.classList.remove('fileNotPresent');
-            // add class form button
-            button.classList.add('filePresent');
-
             button.addEventListener('click', (event) => {
                 uploadFile(event, inputElement.files[0]);
             });
 
-            
         }
 
     })
@@ -100,7 +114,9 @@ function updateThumbnail(dropZoneElement, file) {
 async function uploadFile(event, file) {
     // new form data
     let formData = new FormData();
+
     formData.append("userfile", file);
+    formData.append("title", title);
 
     const result = await fetch('/post', {
         method: "POST",
@@ -110,8 +126,11 @@ async function uploadFile(event, file) {
         }
     });
 
+    console.log(result);
+
 
     const filename = result.headers.get('content-disposition');
+
 
     /* const blob = await result.blob();
     const href = URL.createObjectURL(blob);

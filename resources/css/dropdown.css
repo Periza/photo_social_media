@@ -55,19 +55,13 @@
 }
 
 #convertButton {
+    border: 2px solid black;
     min-height: 35px;
     min-width: 120px;
     border-radius: 10px;
     cursor: pointer;
 }
 
-.fileNotPresent:hover {
-    background-color: lightcoral;
-}
-
-.filePresent:hover {
-    background-color: lightgreen;
-}
 
 .title {
     margin-top: 2vh;
@@ -80,3 +74,10 @@
     margin-left: 1vw;
 }
 
+.fileNotPresent:hover {
+    background-color: red;
+}
+
+.filePresent:hover {
+    background-color: green;
+}
