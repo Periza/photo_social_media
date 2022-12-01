@@ -19,7 +19,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/feed', [PostController::class, 'feed']);
+Route::get('/feed', [PostController::class, 'feed'])->name('feed');
+Route::get('/user/{user}', [ProfileController::class, 'show'])->name('show.user');
+
+Route::get('/user/{user}/posts', [ProfileController::class, 'search']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

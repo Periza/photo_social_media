@@ -9,6 +9,14 @@ class Post extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+    public $fillable = [
+        'image',
+        'title',
+        'user_id'
+    ];
+
     // Post belongs to User
     public function user() {
         return $this->belongsTo(User::class);

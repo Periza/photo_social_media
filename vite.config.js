@@ -8,7 +8,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/css/dropdown.css',
-                'resources/js/dropdown.js'
+                'resources/js/main.js'
             ],
             refresh: true,
         }),

@@ -54,7 +54,7 @@
     justify-content: center;
 }
 
-#convertButton {
+#postButton {
     border: 2px solid black;
     min-height: 35px;
     min-width: 120px;

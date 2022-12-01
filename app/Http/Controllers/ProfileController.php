@@ -6,9 +6,23 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
+    public function show(User $user) {
+        return view('profile', ['user' => $user]);
+    }
+
+    public function search(User $user, Request $request) {
+        $posts = $user->posts()->where('created_at', '>=', \Carbon\Carbon::now()->subDay()->toDateTimeString())->orderBy('created_at', 'desc');
+        if ($request->input('search')) {
+            $posts =  $posts->where('title', 'LIKE', '%'.$request->input('search').'%');
+        }
+        return $posts->get();;
+    }
+
     /**
      * Display the user's profile form.
      *

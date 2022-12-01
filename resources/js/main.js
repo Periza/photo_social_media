@@ -1,32 +1,39 @@
-const button = document.getElementById("convertButton");
+const button = document.getElementById("postButton");
+
 
 // get csrfToken
 const csrfToken = document.getElementsByName("csrf-token")[0].content;
 
 const title = document.getElementById('title');
 
+let file = null;
 
+function changeButtonColor() {
+    if(file && title.value.length) {
+        button.classList.remove('fileNotPresent');
+        button.classList.add('filePresent');
+    } else {
+        button.classList.add('fileNotPresent');
+        button.classList.remove('filePresent');
+    }
+}
+
+button.addEventListener("mouseover", (event) => {
+    changeButtonColor();
+});
+
+title.addEventListener("input", () => {
+    changeButtonColor();
+});
+
+button.addEventListener("click", function() {
+    if(title.value.length && file) {
+        uploadFile(file);
+    }
+});
 
 document.querySelectorAll(".drop-zone__input").forEach(inputElement => {
     const dropZoneElement = inputElement.closest(".drop-zone");
-
-    title.addEventListener("input", (event) => {
-        changeButtonColor();
-    });
-
-    button.addEventListener("mouseover", function(event) {
-        changeButtonColor();
-    });
-
-    function changeButtonColor() {
-        if(inputElement.files.length && title.value.length) {
-            button.classList.remove('fileNotPresent');
-            button.classList.add('filePresent');
-        } else {
-            button.classList.add('fileNotPresent');
-            button.classList.remove('filePresent');
-        }
-    }
 
     dropZoneElement.addEventListener("click", event => {
         inputElement.click();
@@ -35,13 +42,8 @@ document.querySelectorAll(".drop-zone__input").forEach(inputElement => {
     inputElement.addEventListener("change", event => {
         if(inputElement.files.length) {
             updateThumbnail(dropZoneElement, inputElement.files[0]);
-
-            button.addEventListener('click', (event) => {
-                uploadFile(event, inputElement.files[0]);
-            });
-
+            file = inputElement.files[0];
         }
-
     })
 
     dropZoneElement.addEventListener("dragover", event => {
@@ -68,6 +70,7 @@ document.querySelectorAll(".drop-zone__input").forEach(inputElement => {
 
         dropZoneElement.classList.remove("drop-zone--over");
     })
+
 });
 
 /**
@@ -108,38 +111,26 @@ function updateThumbnail(dropZoneElement, file) {
 
 /**
  * @async
- * @param {Event} event
  * @param {File} file
  */
-async function uploadFile(event, file) {
-    // new form data
+async function uploadFile(file) {
     let formData = new FormData();
 
     formData.append("userfile", file);
-    formData.append("title", title);
+    formData.append("title", title.value);
 
-    const result = await fetch('/post', {
+    fetch('/post', {
         method: "POST",
         body: formData,
         headers: {
             "X-CSRF-Token": csrfToken
         }
+    }).then(response => {
+        if(response.ok) {
+            window.location.href = '/feed';
+            sessionStorage.setItem('message', 'Post added!');
+        }
+    }).catch(error => {
+        console.log('Error', error);
     });
-
-    console.log(result);
-
-
-    const filename = result.headers.get('content-disposition');
-
-
-    /* const blob = await result.blob();
-    const href = URL.createObjectURL(blob);
-    
-    const pdf = Object.assign(document.createElement('a'), {href, style:"display:none", download: filename});
-
-    document.body.appendChild(pdf);
-    pdf.click();
-
-    URL.revokeObjectURL (href);
-    pdf.remove(); */
 }
